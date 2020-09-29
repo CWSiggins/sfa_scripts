@@ -25,10 +25,15 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/scenefile.py" />
   </component>
-  <component name="RunManager">
-    <configuration name="scenefile" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Cameron\Desktop\Scripting for Animation\SigginsCameron_Assignment2_Repo\sfa_scripts" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.scenefile">
+    <configuration name="scenefile (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="sfa_scripts" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -36,11 +41,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/venv/src" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/venv/src/scenefile.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/scenefile.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -49,9 +54,35 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="scenefile" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="sfa_scripts" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/scenefile.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.scenefile" />
+      <item itemvalue="Python.scenefile (1)" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.scenefile" />
+        <item itemvalue="Python.scenefile (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -65,5 +96,31 @@
       <updated>1601411285539</updated>
     </task>
     <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="324" y="73" width="1089" height="737" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1601416078940">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="324" y="73" width="1089" height="737" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.864@0.0.1536.864" timestamp="1601416078940" />
+    <state x="549" y="187" key="FileChooserDialogImpl" timestamp="1601416073782">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="549" y="187" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1601416073782" />
+    <state width="635" height="223" key="GridCell.Tab.0.bottom" timestamp="1601416250711">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="635" height="223" key="GridCell.Tab.0.bottom/0.0.1536.864@0.0.1536.864" timestamp="1601416250711" />
+    <state width="635" height="223" key="GridCell.Tab.0.center" timestamp="1601416250711">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="635" height="223" key="GridCell.Tab.0.center/0.0.1536.864@0.0.1536.864" timestamp="1601416250711" />
+    <state width="635" height="223" key="GridCell.Tab.0.left" timestamp="1601416250711">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="635" height="223" key="GridCell.Tab.0.left/0.0.1536.864@0.0.1536.864" timestamp="1601416250711" />
+    <state width="635" height="223" key="GridCell.Tab.0.right" timestamp="1601416250711">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state width="635" height="223" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1601416250711" />
   </component>
 </project>
