@@ -45,6 +45,6 @@ class ScatterTool(object):
                 rand_rotation = rand.uniform(min_rotate, max_rotate)
                 print(rand_rotation)
                 cmds.rotate(rand_rotation, rand_rotation, rand_rotation,
-                            new_instance)
+                            new_instance, r=True)
         else:
             print("Please ensure the object you select is a transform")
