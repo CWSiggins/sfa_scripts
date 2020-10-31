@@ -5,6 +5,7 @@ from shiboken2 import wrapInstance
 import maya.OpenMayaUI as omui
 import maya.cmds as cmds
 import pymel.core as pmc
+import random as rand
 
 log = logging.getLogger(__name__)
 
@@ -26,10 +27,10 @@ class ScatterToolUI(QtWidgets.QDialog):
 
 
 class ScatterTool(object):
+
     @QtCore.Slot()
     def scatter(self):
         """Scatter object along the vertices of another object"""
-
         selection = cmds.ls(os=True, fl=True)
         vertex_list = cmds.filterExpand(selectionMask=31, expand=True)
         object_to_instance = selection[0]
@@ -39,5 +40,11 @@ class ScatterTool(object):
                 position = cmds.pointPosition(vertex, w=True)
                 pmc.move(position[0], position[1], position[2], new_instance,
                          a=True, ws=True)
+                min_rotate = 10.0
+                max_rotate = 90.0
+                rand_rotation = rand.uniform(min_rotate, max_rotate)
+                print(rand_rotation)
+                cmds.rotate(rand_rotation, rand_rotation, rand_rotation,
+                            new_instance)
         else:
             print("Please ensure the object you select is a transform")
