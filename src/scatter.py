@@ -55,8 +55,14 @@ class ScatterTool(object):
 
     @staticmethod
     def random_rotation(new_instance):
-        min_rotate = 10.0
-        max_rotate = 90.0
-        rand_rotation = rand.uniform(min_rotate, max_rotate)
-        cmds.rotate(rand_rotation, rand_rotation, rand_rotation,
+        min_rotate_x = 10.0
+        max_rotate_x = 90.0
+        rand_rotation_x = rand.uniform(min_rotate_x, max_rotate_x)
+        min_rotate_y = 10.0
+        max_rotate_y = 90.0
+        rand_rotation_y = rand.uniform(min_rotate_y, max_rotate_y)
+        min_rotate_z = 10.0
+        max_rotate_z = 90.0
+        rand_rotation_z = rand.uniform(min_rotate_z, max_rotate_z)
+        cmds.rotate(rand_rotation_x, rand_rotation_y, rand_rotation_z,
                     new_instance, r=True)
