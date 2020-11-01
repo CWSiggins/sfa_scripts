@@ -40,11 +40,23 @@ class ScatterTool(object):
                 position = cmds.pointPosition(vertex, w=True)
                 pmc.move(position[0], position[1], position[2], new_instance,
                          a=True, ws=True)
-                min_rotate = 10.0
-                max_rotate = 90.0
-                rand_rotation = rand.uniform(min_rotate, max_rotate)
-                print(rand_rotation)
-                cmds.rotate(rand_rotation, rand_rotation, rand_rotation,
-                            new_instance, r=True)
+                self.random_rotation(new_instance)
+                self.random_scale(new_instance)
         else:
             print("Please ensure the object you select is a transform")
+
+    @staticmethod
+    def random_scale(new_instance):
+        min_scale = 0.8
+        max_scale = 1.2
+        rand_scale = rand.uniform(min_scale, max_scale)
+        cmds.scale(rand_scale, rand_scale, rand_scale, new_instance,
+                   r=True)
+
+    @staticmethod
+    def random_rotation(new_instance):
+        min_rotate = 10.0
+        max_rotate = 90.0
+        rand_rotation = rand.uniform(min_rotate, max_rotate)
+        cmds.rotate(rand_rotation, rand_rotation, rand_rotation,
+                    new_instance, r=True)
