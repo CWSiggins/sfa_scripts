@@ -22,7 +22,7 @@ class ScatterToolUI(QtWidgets.QDialog):
     def __init__(self):
         super(ScatterToolUI, self).__init__(parent=maya_main_window())
         self.setWindowTitle("Scatter Tool")
-        self.setMinimumWidth(300)
+        self.setMinimumWidth(325)
         self.setMaximumHeight(200)
         self.scatter_tool = ScatterTool()
         self.create_ui()
@@ -32,10 +32,22 @@ class ScatterToolUI(QtWidgets.QDialog):
         self.title_lbl = QtWidgets.QLabel("Scatter Objects")
         self.title_lbl.setStyleSheet("font: bold 20px")
         self.scale_lay = self._create_max_scale_ui()
+        self.min_x_rotate_lay = self._create_min_x_rotation_ui()
+        self.max_x_rotate_lay = self._create_max_x_rotation_ui()
+        self.min_y_rotate_lay = self._create_min_y_rotation_ui()
+        self.max_y_rotate_lay = self._create_max_y_rotation_ui()
+        self.min_z_rotate_lay = self._create_min_z_rotation_ui()
+        self.max_z_rotate_lay = self._create_max_z_rotation_ui()
         self.button_lay = self._create_button_ui()
         self.main_lay = QtWidgets.QVBoxLayout()
         self.main_lay.addWidget(self.title_lbl)
         self.main_lay.addLayout(self.scale_lay)
+        self.main_lay.addLayout(self.min_x_rotate_lay)
+        self.main_lay.addLayout(self.max_x_rotate_lay)
+        self.main_lay.addLayout(self.min_y_rotate_lay)
+        self.main_lay.addLayout(self.max_y_rotate_lay)
+        self.main_lay.addLayout(self.min_z_rotate_lay)
+        self.main_lay.addLayout(self.max_z_rotate_lay)
         self.main_lay.addLayout(self.button_lay)
         self.setLayout(self.main_lay)
 
@@ -52,6 +64,12 @@ class ScatterToolUI(QtWidgets.QDialog):
     def _set_scatter_properties_from_ui(self):
         self.scatter_tool.min_scale = self.min_scale_sbx.value()
         self.scatter_tool.max_scale = self.max_scale_sbx.value()
+        self.scatter_tool.min_rotate_x = self.min_x_rotation_sbx.value()
+        self.scatter_tool.min_rotate_x = self.min_x_rotation_sbx.value()
+        self.scatter_tool.min_rotate_y = self.min_y_rotation_sbx.value()
+        self.scatter_tool.min_rotate_y = self.min_y_rotation_sbx.value()
+        self.scatter_tool.min_rotate_z = self.min_z_rotation_sbx.value()
+        self.scatter_tool.min_rotate_z = self.min_z_rotation_sbx.value()
 
     def _create_button_ui(self):
         self.scatter_btn = QtWidgets.QPushButton("Scatter")
@@ -83,23 +101,92 @@ class ScatterToolUI(QtWidgets.QDialog):
         layout.addWidget(self.max_scale_sbx, 2, 1)
         return layout
 
+    def _create_min_x_rotation_ui(self):
+        layout = QtWidgets.QGridLayout()
+        self.min_x_rotation_sbx = QtWidgets.QSpinBox()
+        self.min_x_rotation_sbx.\
+            setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
+        self.min_x_rotation_sbx.setFixedWidth(100)
+        self.min_x_rotation_sbx.setValue(self.scatter_tool.min_rotate_x)
+        layout.addWidget(QtWidgets.QLabel("Minimum X Rotate:"), 5, 0)
+        layout.addWidget(self.min_x_rotation_sbx, 5, 1)
+        return layout
+
+    def _create_max_x_rotation_ui(self):
+        layout = QtWidgets.QGridLayout()
+        self.max_x_rotation_sbx = QtWidgets.QSpinBox()
+        self.max_x_rotation_sbx. \
+            setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
+        self.max_x_rotation_sbx.setFixedWidth(100)
+        self.max_x_rotation_sbx.setValue(self.scatter_tool.max_rotate_x)
+        layout.addWidget(QtWidgets.QLabel("Maximum X Rotate:"), 5, 2)
+        layout.addWidget(self.max_x_rotation_sbx, 5, 3)
+        return layout
+
+    def _create_min_y_rotation_ui(self):
+        layout = QtWidgets.QGridLayout()
+        self.min_y_rotation_sbx = QtWidgets.QSpinBox()
+        self.min_y_rotation_sbx.\
+            setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
+        self.min_y_rotation_sbx.setFixedWidth(100)
+        self.min_y_rotation_sbx.setValue(self.scatter_tool.min_rotate_y)
+        layout.addWidget(QtWidgets.QLabel("Minimum Y Rotate:"), 6, 0)
+        layout.addWidget(self.min_y_rotation_sbx, 6, 1)
+        return layout
+
+    def _create_max_y_rotation_ui(self):
+        layout = QtWidgets.QGridLayout()
+        self.max_y_rotation_sbx = QtWidgets.QSpinBox()
+        self.max_y_rotation_sbx. \
+            setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
+        self.max_y_rotation_sbx.setFixedWidth(100)
+        self.max_y_rotation_sbx.setValue(self.scatter_tool.max_rotate_y)
+        layout.addWidget(QtWidgets.QLabel("Maximum Y Rotate:"), 6, 2)
+        layout.addWidget(self.max_y_rotation_sbx, 6, 3)
+        return layout
+
+    def _create_min_z_rotation_ui(self):
+        layout = QtWidgets.QGridLayout()
+        self.min_z_rotation_sbx = QtWidgets.QSpinBox()
+        self.min_z_rotation_sbx.\
+            setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
+        self.min_z_rotation_sbx.setFixedWidth(100)
+        self.min_z_rotation_sbx.setValue(self.scatter_tool.min_rotate_z)
+        layout.addWidget(QtWidgets.QLabel("Minimum Z Rotate:"), 7, 0)
+        layout.addWidget(self.min_z_rotation_sbx, 7, 1)
+        return layout
+
+    def _create_max_z_rotation_ui(self):
+        layout = QtWidgets.QGridLayout()
+        self.max_z_rotation_sbx = QtWidgets.QSpinBox()
+        self.max_z_rotation_sbx. \
+            setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
+        self.max_z_rotation_sbx.setFixedWidth(100)
+        self.max_z_rotation_sbx.setValue(self.scatter_tool.max_rotate_z)
+        layout.addWidget(QtWidgets.QLabel("Maximum Z Rotate:"), 7, 2)
+        layout.addWidget(self.max_z_rotation_sbx, 7, 3)
+        return layout
+
     def _create_modifier_headers(self):
         self.scale_header_lbl = QtWidgets.QLabel("Random Scale Modifier")
         self.scale_header_lbl.setStyleSheet("font: bold 15px")
+        self.rotate_header_lbl = QtWidgets.QLabel("Random Rotation Modifier")
+        self.rotate_header_lbl.setStyleSheet("font: bold 15px")
         layout = QtWidgets.QGridLayout()
         layout.addWidget(self.scale_header_lbl, 0, 0)
+        layout.addWidget(self.rotate_header_lbl, 4, 0)
         return layout
 
 
 class ScatterTool(object):
 
     def __init__(self):
-        self.max_rotate_z = 90.0
-        self.min_rotate_z = 10.0
-        self.max_rotate_y = 90.0
-        self.min_rotate_y = 10.0
-        self.max_rotate_x = 90.0
-        self.min_rotate_x = 10.0
+        self.max_rotate_z = 0
+        self.min_rotate_z = 0
+        self.max_rotate_y = 0
+        self.min_rotate_y = 0
+        self.max_rotate_x = 0
+        self.min_rotate_x = 0
         self.min_scale = 1.0
         self.max_scale = 1.0
 
