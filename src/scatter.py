@@ -6,7 +6,6 @@ import maya.OpenMayaUI as omui
 import maya.cmds as cmds
 import pymel.core as pmc
 import random as rand
-import sys
 
 log = logging.getLogger(__name__)
 
@@ -22,7 +21,6 @@ class ScatterToolUI(QtWidgets.QDialog):
 
     def __init__(self):
         self.scatter_tool = ScatterTool()
-        sys.setrecursionlimit(10**4)
         self.open_tool_window()
 
     def open_tool_window(self):
@@ -35,7 +33,8 @@ class ScatterToolUI(QtWidgets.QDialog):
             self.create_connections()
         else:
             super(ScatterToolUI, self).__init__(parent=maya_main_window())
-            self.setWindowTitle("Please Select Only Two Objects to Use This Tool")
+            self.setWindowTitle("Please Select Only Two Objects to Use This "
+                                "Tool")
             self.setMinimumWidth(500)
             self.setMaximumHeight(200)
 
@@ -223,7 +222,8 @@ class ScatterToolUI(QtWidgets.QDialog):
     def _create_modifier_headers(self):
         self.scale_header_lbl = QtWidgets.QLabel("Random Scale Modifier")
         self.scale_header_lbl.setStyleSheet("font: bold 15px")
-        self.rotate_header_lbl = QtWidgets.QLabel("Random Rotation Modifier")
+        self.rotate_header_lbl = QtWidgets.QLabel("Random Rotation Offset "
+                                                  "Modifier")
         self.rotate_header_lbl.setStyleSheet("font: bold 15px")
         layout = QtWidgets.QGridLayout()
         layout.addWidget(self.scale_header_lbl, 2, 0)
