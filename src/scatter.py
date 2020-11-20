@@ -266,33 +266,43 @@ class ScatterTool(object):
                 position = cmds.pointPosition(vertex, w=True)
                 pmc.move(position[0], position[1], position[2], new_instance,
                          a=True, ws=True)
-                faces = cmds.polyListComponentConversion\
-                    (vertex, fromVertex=True, toFace=True)
-                faces = cmds.filterExpand(faces, selectionMask=34,
-                                          expand=True)
+                self.align_to_faces(new_instance, vertex)
                 self.random_rotation(new_instance)
                 self.random_scale(new_instance)
-                face_normals = []
-                for face in faces:
-                    mesh_face = pmc.MeshFace(face)
-                    face_normals.append(mesh_face.getNormal())
-                sum_of_normals = sum(face_normals)
-                ave_vtx_normal = sum_of_normals / len(sum_of_normals)
-                ave_vtx_normal.normalize()
-                tangent = ave_vtx_normal.cross(pmc.dt.Vector(0, 1, 0))
-                tangent.normalize()
-                tangent2 = ave_vtx_normal.cross(tangent)
-                tangent2.normalize()
-                pos = cmds.xform(vertex, query=True, worldSpace=True,
-                                 translation=True)
-                matrix = [tangent2.x, tangent2.y, tangent2.z, 0.0,
-                          ave_vtx_normal.x, ave_vtx_normal.y,
-                          ave_vtx_normal.z, 0.0,
-                          tangent.x, tangent.y, tangent.z, 0.0,
-                          pos[0], pos[1], pos[2], 1.0]
-                cmds.xform(new_instance, worldSpace=True, matrix=matrix)
         else:
             print("Please ensure the object you select is a transform")
+
+    @staticmethod
+    def align_to_faces(new_instance, vertex):
+        faces = cmds.polyListComponentConversion(vertex, fromVertex=True,
+                                                 toFace=True)
+        faces = cmds.filterExpand(faces, selectionMask=34,
+                                  expand=True)
+        ave_vtx_normal, tangent, tangent2 = ScatterTool.find_average_normal(
+            faces)
+        pos = cmds.xform(vertex, query=True, worldSpace=True,
+                         translation=True)
+        matrix = [tangent2.x, tangent2.y, tangent2.z, 0.0,
+                  ave_vtx_normal.x, ave_vtx_normal.y,
+                  ave_vtx_normal.z, 0.0,
+                  tangent.x, tangent.y, tangent.z, 0.0,
+                  pos[0], pos[1], pos[2], 1.0]
+        cmds.xform(new_instance, worldSpace=True, matrix=matrix)
+
+    @staticmethod
+    def find_average_normal(faces):
+        face_normals = []
+        for face in faces:
+            mesh_face = pmc.MeshFace(face)
+            face_normals.append(mesh_face.getNormal())
+        sum_of_normals = sum(face_normals)
+        ave_vtx_normal = sum_of_normals / len(sum_of_normals)
+        ave_vtx_normal.normalize()
+        tangent = ave_vtx_normal.cross(pmc.dt.Vector(0, 1, 0))
+        tangent.normalize()
+        tangent2 = ave_vtx_normal.cross(tangent)
+        tangent2.normalize()
+        return ave_vtx_normal, tangent, tangent2
 
     def random_scale(self, new_instance):
         rand_scale = rand.uniform(self.min_scale, self.max_scale)
