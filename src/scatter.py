@@ -70,6 +70,7 @@ class ScatterToolUI(QtWidgets.QDialog):
         """Connect Signals and Slots"""
         self.scatter_btn.clicked.connect(self._scatter)
         self.selection_btn.clicked.connect(self._add_selection)
+        self.swap_btn.clicked.connect(self._swap_selection)
 
     @QtCore.Slot()
     def _object_selection(self):
@@ -79,14 +80,32 @@ class ScatterToolUI(QtWidgets.QDialog):
             QLabel("Object to Scatter To:")
         self.object_to_scatter_with_lbl.setMinimumWidth(100)
         self.object_to_scatter_to_lbl.setMinimumWidth(100)
+        self.selection_btn = QtWidgets.QPushButton("Add Selection")
+        self.swap_btn = QtWidgets.QPushButton("Swap Selection")
         layout = QtWidgets.QGridLayout()
         layout.addWidget(self.object_to_scatter_with_lbl, 0, 0)
         layout.addWidget(self.object_to_scatter_to_lbl, 0, 1)
+        layout.addWidget(self.selection_btn, 1, 0)
+        layout.addWidget(self.swap_btn, 1, 1)
         return layout
 
     @QtCore.Slot()
     def _add_selection(self):
         """Add current selections to tool"""
+        self.object_to_scatter_with = self.scatter_tool.selection[0]
+        current_object_to_scatter_with = "Object to Scatter With: " \
+                                         + str(self.object_to_scatter_with)
+        self.object_to_scatter_with_lbl.setText(current_object_to_scatter_with)
+        self.object_to_scatter_to = self.scatter_tool.selection[1]
+        current_object_to_scatter_to = "Object to Scatter To: " \
+                                       + str(self.object_to_scatter_to)
+        self.object_to_scatter_to_lbl.setText(current_object_to_scatter_to)
+
+    @QtCore.Slot()
+    def _swap_selection(self):
+        """Swap current selection"""
+        self.scatter_tool.selection.insert(0,
+                                           self.scatter_tool.selection.pop())
         self.object_to_scatter_with = self.scatter_tool.selection[0]
         current_object_to_scatter_with = "Object to Scatter With: " \
                                          + str(self.object_to_scatter_with)
@@ -105,6 +124,7 @@ class ScatterToolUI(QtWidgets.QDialog):
     def _set_scatter_properties_from_ui(self):
         self.scatter_tool = ScatterTool()
         self.scatter_tool.selection[0] = self.object_to_scatter_with
+        self.scatter_tool.selection[1] = self.object_to_scatter_to
         self.scatter_tool.min_scale = self.min_scale_sbx.value()
         self.scatter_tool.max_scale = self.max_scale_sbx.value()
         self.scatter_tool.min_rotate_x = self.min_x_rotation_sbx.value()
@@ -116,10 +136,8 @@ class ScatterToolUI(QtWidgets.QDialog):
 
     def _create_button_ui(self):
         self.scatter_btn = QtWidgets.QPushButton("Scatter")
-        self.selection_btn = QtWidgets.QPushButton("Add Selection")
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.scatter_btn)
-        layout.addWidget(self.selection_btn)
         return layout
 
     def _create_min_scale_ui(self):
@@ -255,9 +273,14 @@ class ScatterTool(object):
         self.min_rotate_x = 0
         self.min_scale = 1.0
         self.max_scale = 1.0
+        self.align = False
+        self.undo = False
+        self.swap = False
 
     def scatter(self):
         """Scatter object along the vertices of another object"""
+        if self.swap is True:
+            self.swap_selection()
         vertex_list = cmds.ls(str(self.selection[1]) + '.vtx[*]', fl=True)
         object_to_instance = self.selection[0]
         if cmds.objectType(object_to_instance) == 'transform':
@@ -266,9 +289,12 @@ class ScatterTool(object):
                 position = cmds.pointPosition(vertex, w=True)
                 pmc.move(position[0], position[1], position[2], new_instance,
                          a=True, ws=True)
-                self.align_to_faces(new_instance, vertex)
+                if self.align is True:
+                    self.align_to_faces(new_instance, vertex)
                 self.random_rotation(new_instance)
                 self.random_scale(new_instance)
+                if self.undo is True:
+                    cmds.delete(new_instance)
         else:
             print("Please ensure the object you select is a transform")
 
@@ -318,3 +344,6 @@ class ScatterTool(object):
             rand.uniform(self.min_rotate_z, self.max_rotate_z)
         cmds.rotate(rand_rotation_x, rand_rotation_y, rand_rotation_z,
                     new_instance, r=True)
+
+    def swap_selection(self):
+        self.selection.insert(0, self.selection.pop())
