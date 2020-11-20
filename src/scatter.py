@@ -154,6 +154,8 @@ class ScatterToolUI(QtWidgets.QDialog):
         self.min_x_rotation_sbx. \
             setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
         self.min_x_rotation_sbx.setFixedWidth(100)
+        self.min_x_rotation_sbx.setMaximum(360)
+        self.min_x_rotation_sbx.setMinimum(-360)
         self.min_x_rotation_sbx.setValue(self.scatter_tool.min_rotate_x)
         layout.addWidget(QtWidgets.QLabel("Minimum X Rotate:"), 6, 0)
         layout.addWidget(self.min_x_rotation_sbx, 6, 2)
@@ -166,6 +168,8 @@ class ScatterToolUI(QtWidgets.QDialog):
         self.max_x_rotation_sbx. \
             setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
         self.max_x_rotation_sbx.setFixedWidth(100)
+        self.max_x_rotation_sbx.setMaximum(360)
+        self.max_x_rotation_sbx.setMinimum(-360)
         self.max_x_rotation_sbx.setValue(self.scatter_tool.max_rotate_x)
         layout.addWidget(QtWidgets.QLabel("Maximum X Rotate:"), 7, 4)
         layout.addWidget(self.max_x_rotation_sbx, 7, 6)
@@ -178,6 +182,8 @@ class ScatterToolUI(QtWidgets.QDialog):
         self.min_y_rotation_sbx. \
             setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
         self.min_y_rotation_sbx.setFixedWidth(100)
+        self.min_y_rotation_sbx.setMaximum(360)
+        self.min_y_rotation_sbx.setMinimum(-360)
         self.min_y_rotation_sbx.setValue(self.scatter_tool.min_rotate_y)
         layout.addWidget(QtWidgets.QLabel("Minimum Y Rotate:"), 8, 0)
         layout.addWidget(self.min_y_rotation_sbx, 8, 1)
@@ -190,6 +196,8 @@ class ScatterToolUI(QtWidgets.QDialog):
         self.max_y_rotation_sbx. \
             setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
         self.max_y_rotation_sbx.setFixedWidth(100)
+        self.max_y_rotation_sbx.setMaximum(360)
+        self.max_y_rotation_sbx.setMinimum(-360)
         self.max_y_rotation_sbx.setValue(self.scatter_tool.max_rotate_y)
         layout.addWidget(QtWidgets.QLabel("Maximum Y Rotate:"), 9, 2)
         layout.addWidget(self.max_y_rotation_sbx, 9, 3)
@@ -202,6 +210,8 @@ class ScatterToolUI(QtWidgets.QDialog):
         self.min_z_rotation_sbx. \
             setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
         self.min_z_rotation_sbx.setFixedWidth(100)
+        self.min_z_rotation_sbx.setMaximum(360)
+        self.min_z_rotation_sbx.setMinimum(-360)
         self.min_z_rotation_sbx.setValue(self.scatter_tool.min_rotate_z)
         layout.addWidget(QtWidgets.QLabel("Minimum Z Rotate:"), 10, 0)
         layout.addWidget(self.min_z_rotation_sbx, 10, 1)
@@ -214,6 +224,8 @@ class ScatterToolUI(QtWidgets.QDialog):
         self.max_z_rotation_sbx. \
             setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
         self.max_z_rotation_sbx.setFixedWidth(100)
+        self.max_z_rotation_sbx.setMaximum(360)
+        self.max_z_rotation_sbx.setMinimum(-360)
         self.max_z_rotation_sbx.setValue(self.scatter_tool.max_rotate_z)
         layout.addWidget(QtWidgets.QLabel("Maximum Z Rotate:"), 11, 2)
         layout.addWidget(self.max_z_rotation_sbx, 11, 3)
@@ -254,8 +266,31 @@ class ScatterTool(object):
                 position = cmds.pointPosition(vertex, w=True)
                 pmc.move(position[0], position[1], position[2], new_instance,
                          a=True, ws=True)
+                faces = cmds.polyListComponentConversion\
+                    (vertex, fromVertex=True, toFace=True)
+                faces = cmds.filterExpand(faces, selectionMask=34,
+                                          expand=True)
                 self.random_rotation(new_instance)
                 self.random_scale(new_instance)
+                face_normals = []
+                for face in faces:
+                    mesh_face = pmc.MeshFace(face)
+                    face_normals.append(mesh_face.getNormal())
+                sum_of_normals = sum(face_normals)
+                ave_vtx_normal = sum_of_normals / len(sum_of_normals)
+                ave_vtx_normal.normalize()
+                tangent = ave_vtx_normal.cross(pmc.dt.Vector(0, 1, 0))
+                tangent.normalize()
+                tangent2 = ave_vtx_normal.cross(tangent)
+                tangent2.normalize()
+                pos = cmds.xform(vertex, query=True, worldSpace=True,
+                                 translation=True)
+                matrix = [tangent2.x, tangent2.y, tangent2.z, 0.0,
+                          ave_vtx_normal.x, ave_vtx_normal.y,
+                          ave_vtx_normal.z, 0.0,
+                          tangent.x, tangent.y, tangent.z, 0.0,
+                          pos[0], pos[1], pos[2], 1.0]
+                cmds.xform(new_instance, worldSpace=True, matrix=matrix)
         else:
             print("Please ensure the object you select is a transform")
 
