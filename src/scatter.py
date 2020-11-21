@@ -22,13 +22,12 @@ class ScatterToolUI(QtWidgets.QDialog):
     def __init__(self):
         self.scatter_tool = ScatterTool()
         self.open_tool_window()
+        self.align_normals = False
 
     def open_tool_window(self):
         if len(self.scatter_tool.selection) == 2:
             super(ScatterToolUI, self).__init__(parent=maya_main_window())
             self.setWindowTitle("Scatter Tool")
-            # self.setMinimumWidth(500)
-            # self.setMaximumHeight(200)
             self.create_ui()
             self.create_connections()
         else:
@@ -121,6 +120,7 @@ class ScatterToolUI(QtWidgets.QDialog):
         self.scatter_tool.min_rotate_y = self.min_y_rotation_sbx.value()
         self.scatter_tool.min_rotate_z = self.min_z_rotation_sbx.value()
         self.scatter_tool.min_rotate_z = self.min_z_rotation_sbx.value()
+        self.scatter_tool.align = self.align_normals
 
     def _create_button_ui(self):
         self.scatter_btn = QtWidgets.QPushButton("Scatter")
@@ -151,7 +151,23 @@ class ScatterToolUI(QtWidgets.QDialog):
         self._create_max_y_rotation_ui(layout)
         self._create_min_z_rotation_ui(layout)
         self._create_max_z_rotation_ui(layout)
+        self._create_align_checkbox(layout)
         return layout
+
+    def _create_align_checkbox(self, layout):
+        self._align_to_normals_checkbox = QtWidgets.QCheckBox("Align to "
+                                                              "Normals", self)
+        self._align_to_normals_checkbox.stateChanged.\
+            connect(self._check_for_align)
+        # self._align_to_normals_checkbox.toggle()
+        layout.addWidget(self._align_to_normals_checkbox, 9, 0, 1, 1)
+
+    def _check_for_align(self, state):
+        if state == QtCore.Qt.Checked:
+            self.align_normals = True
+            print(self.scatter_tool.align)
+        else:
+            self.align_normals = False
 
     def _create_max_z_rotation_ui(self, layout):
         self.max_z_rotation_sbx = QtWidgets.QSpinBox()
