@@ -23,11 +23,13 @@ class ScatterToolUI(QtWidgets.QDialog):
         self.scatter_tool = ScatterTool()
         self.open_tool_window()
         self.align_normals = False
+        self.undo = False
 
     def open_tool_window(self):
         if len(self.scatter_tool.selection) == 2:
             super(ScatterToolUI, self).__init__(parent=maya_main_window())
             self.setWindowTitle("Scatter Tool")
+            self.setMaximumHeight(200)
             self.create_ui()
             self.create_connections()
         else:
@@ -107,6 +109,8 @@ class ScatterToolUI(QtWidgets.QDialog):
         """Scatter objects"""
         self._set_scatter_properties_from_ui()
         self.scatter_tool.scatter()
+        if self.scatter_tool.close is True:
+            self.close()
 
     def _set_scatter_properties_from_ui(self):
         self.scatter_tool = ScatterTool()
@@ -120,7 +124,9 @@ class ScatterToolUI(QtWidgets.QDialog):
         self.scatter_tool.min_rotate_y = self.min_y_rotation_sbx.value()
         self.scatter_tool.min_rotate_z = self.min_z_rotation_sbx.value()
         self.scatter_tool.min_rotate_z = self.min_z_rotation_sbx.value()
+        self.scatter_tool.density = self.density_sbx.value()
         self.scatter_tool.align = self.align_normals
+        self.scatter_tool.undo = self.undo
 
     def _create_button_ui(self):
         self.scatter_btn = QtWidgets.QPushButton("Scatter")
@@ -151,15 +157,30 @@ class ScatterToolUI(QtWidgets.QDialog):
         self._create_max_y_rotation_ui(layout)
         self._create_min_z_rotation_ui(layout)
         self._create_max_z_rotation_ui(layout)
+        self._create_density_ui(layout)
         self._create_align_checkbox(layout)
+        self._create_undo_checkbox(layout)
         return layout
+
+    def _create_density_ui(self, layout):
+        self.density_sbx = QtWidgets.QDoubleSpinBox()
+        self.density_sbx. \
+            setButtonSymbols(QtWidgets.QAbstractSpinBox.PlusMinus)
+        self.density_sbx.setSingleStep(0.1)
+        self.density_sbx.setFixedWidth(100)
+        self.density_sbx.setMaximum(1.0)
+        self.density_sbx.setMinimum(0.0)
+        self.density_sbx.setValue(self.scatter_tool.density)
+        layout.addWidget(QtWidgets.QLabel("Density Multiplier "
+                                          "(Amount to Scatter On)"), 10, 0, 1,
+                         2)
+        layout.addWidget(self.density_sbx, 10, 2, 1, 1)
 
     def _create_align_checkbox(self, layout):
         self._align_to_normals_checkbox = QtWidgets.QCheckBox("Align to "
                                                               "Normals", self)
         self._align_to_normals_checkbox.stateChanged.\
             connect(self._check_for_align)
-        # self._align_to_normals_checkbox.toggle()
         layout.addWidget(self._align_to_normals_checkbox, 9, 0, 1, 1)
 
     def _check_for_align(self, state):
@@ -168,6 +189,17 @@ class ScatterToolUI(QtWidgets.QDialog):
             print(self.scatter_tool.align)
         else:
             self.align_normals = False
+
+    def _create_undo_checkbox(self, layout):
+        self._undo_checkbox = QtWidgets.QCheckBox("Enable Undo on Scatter", self)
+        self._undo_checkbox.stateChanged.connect(self._check_for_undo)
+        layout.addWidget(self._undo_checkbox, 9, 1, 1, 2)
+
+    def _check_for_undo(self, state):
+        if state == QtCore.Qt.Checked:
+            self.undo = True
+        else:
+            self.undo = False
 
     def _create_max_z_rotation_ui(self, layout):
         self.max_z_rotation_sbx = QtWidgets.QSpinBox()
@@ -268,25 +300,36 @@ class ScatterTool(object):
         self.min_rotate_x = 0
         self.min_scale = 1.0
         self.max_scale = 1.0
+        self.density = 1.0
         self.align = False
         self.undo = False
+        self.close = False
 
     def scatter(self):
         """Scatter object along the vertices of another object"""
         vertex_list = cmds.ls(str(self.selection[1]) + '.vtx[*]', fl=True)
         object_to_instance = self.selection[0]
+        density_amount = len(vertex_list) * self.density
+        scatter_vertices = rand.sample(vertex_list, int(density_amount))
         if cmds.objectType(object_to_instance) == 'transform':
-            for vertex in vertex_list:
-                new_instance = cmds.instance(object_to_instance)
-                position = cmds.pointPosition(vertex, w=True)
-                pmc.move(position[0], position[1], position[2], new_instance,
-                         a=True, ws=True)
-                if self.align is True:
-                    self.align_to_faces(new_instance, vertex)
-                self.random_rotation(new_instance)
-                self.random_scale(new_instance)
-                if self.undo is True:
-                    cmds.delete(new_instance)
+            for vertex in scatter_vertices:
+                if self.undo is False:
+                    new_instance = cmds.instance(object_to_instance)
+                    position = cmds.pointPosition(vertex, w=True)
+                    pmc.move(position[0], position[1], position[2],
+                             new_instance, a=True, ws=True)
+                    if self.align is True:
+                        self.align_to_faces(new_instance, vertex)
+                    self.random_rotation(new_instance)
+                    self.random_scale(new_instance)
+                    cmds.select(self.selection)
+                    self.close = False
+                else:
+                    cmds.select(all=True)
+                    cmds.select(object_to_instance, self.selection[1], d=True)
+                    instances = cmds.ls(os=True, fl=True)
+                    cmds.delete(instances)
+                    self.close = True
         else:
             print("Please ensure the object you select is a transform")
 
