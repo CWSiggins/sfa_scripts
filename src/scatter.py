@@ -312,26 +312,29 @@ class ScatterTool(object):
         density_amount = len(vertex_list) * self.density
         scatter_vertices = rand.sample(vertex_list, int(density_amount))
         if cmds.objectType(object_to_instance) == 'transform':
-            for vertex in scatter_vertices:
-                if self.undo is False:
-                    new_instance = cmds.instance(object_to_instance)
-                    position = cmds.pointPosition(vertex, w=True)
-                    pmc.move(position[0], position[1], position[2],
-                             new_instance, a=True, ws=True)
-                    if self.align is True:
-                        self.align_to_faces(new_instance, vertex)
-                    self.random_rotation(new_instance)
-                    self.random_scale(new_instance)
-                    cmds.select(self.selection)
-                    self.close = False
-                else:
-                    cmds.select(all=True)
-                    cmds.select(object_to_instance, self.selection[1], d=True)
-                    instances = cmds.ls(os=True, fl=True)
-                    cmds.delete(instances)
-                    self.close = True
+            self.scatter_logic(object_to_instance, scatter_vertices)
         else:
             print("Please ensure the object you select is a transform")
+
+    def scatter_logic(self, object_to_instance, scatter_vertices):
+        for vertex in scatter_vertices:
+            if self.undo is False:
+                new_instance = cmds.instance(object_to_instance)
+                position = cmds.pointPosition(vertex, w=True)
+                pmc.move(position[0], position[1], position[2],
+                         new_instance, a=True, ws=True)
+                if self.align is True:
+                    self.align_to_faces(new_instance, vertex)
+                self.random_rotation(new_instance)
+                self.random_scale(new_instance)
+                cmds.select(self.selection)
+                self.close = False
+            else:
+                cmds.select(all=True)
+                cmds.select(object_to_instance, self.selection[1], d=True)
+                instances = cmds.ls(os=True, fl=True)
+                cmds.delete(instances)
+                self.close = True
 
     @staticmethod
     def align_to_faces(new_instance, vertex):
