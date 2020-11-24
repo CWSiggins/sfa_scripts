@@ -333,14 +333,11 @@ class ScatterTool(object):
                 cmds.select(self.selection)
                 self.close = False
             else:
-                self.undo(object_to_instance)
-
-    def undo(self, object_to_instance):
-        cmds.select(all=True)
-        cmds.select(object_to_instance, self.selection[1], d=True)
-        instances = cmds.ls(os=True, fl=True)
-        cmds.delete(instances)
-        self.close = True
+                cmds.select(all=True)
+                cmds.select(object_to_instance, self.selection[1], d=True)
+                instances = cmds.ls(os=True, fl=True)
+                cmds.delete(instances)
+                self.close = True
 
     @staticmethod
     def align_to_faces(new_instance, vertex):
