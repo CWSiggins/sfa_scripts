@@ -149,6 +149,10 @@ class ScatterToolUI(QtWidgets.QDialog):
         layout.addWidget(self.scale_header_lbl, 2, 0, 1, 4)
         layout.addWidget(self.rotate_header_lbl, 4, 0, 1, 4)
         layout.addWidget(self.misc_header_lbl, 8, 0, 1, 4)
+        self._combine_layouts(layout)
+        return layout
+
+    def _combine_layouts(self, layout):
         self._create_min_scale_ui(layout)
         self._create_max_scale_ui(layout)
         self._create_min_x_rotation_ui(layout)
@@ -160,7 +164,6 @@ class ScatterToolUI(QtWidgets.QDialog):
         self._create_density_ui(layout)
         self._create_align_checkbox(layout)
         self._create_undo_checkbox(layout)
-        return layout
 
     def _create_density_ui(self, layout):
         self.density_sbx = QtWidgets.QDoubleSpinBox()
@@ -330,11 +333,14 @@ class ScatterTool(object):
                 cmds.select(self.selection)
                 self.close = False
             else:
-                cmds.select(all=True)
-                cmds.select(object_to_instance, self.selection[1], d=True)
-                instances = cmds.ls(os=True, fl=True)
-                cmds.delete(instances)
-                self.close = True
+                self.undo(object_to_instance)
+
+    def undo(self, object_to_instance):
+        cmds.select(all=True)
+        cmds.select(object_to_instance, self.selection[1], d=True)
+        instances = cmds.ls(os=True, fl=True)
+        cmds.delete(instances)
+        self.close = True
 
     @staticmethod
     def align_to_faces(new_instance, vertex):
